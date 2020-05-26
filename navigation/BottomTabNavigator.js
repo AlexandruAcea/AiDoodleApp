@@ -1,48 +1,56 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as React from 'react';
+import React, { useContext } from 'react'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
+import TabBarIcon from '../components/TabBarIcon'
+import HomeScreen from '../screens/HomeScreen'
+import SettingsScreen from '../screens/SettingsScreen'
+import GalleryScreen from '../screens/GalleryScreen'
 
-const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = 'Home';
+import Context from '../context/GlobalContext'
 
-export default function BottomTabNavigator({ navigation, route }) {
-  // Set the header title on the parent stack navigator depending on the
-  // currently active tab. Learn more in the documentation:
-  // https://reactnavigation.org/docs/en/screen-options-resolution.html
-  navigation.setOptions({ headerTitle: getHeaderTitle(route) });
+const BottomTab = createBottomTabNavigator()
+const INITIAL_ROUTE_NAME = 'Home'
 
-  return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
-      <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: 'Get Started',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-code-working" />,
-        }}
-      />
-      <BottomTab.Screen
-        name="Links"
-        component={LinksScreen}
-        options={{
-          title: 'Resources',
-          tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
-        }}
-      />
-    </BottomTab.Navigator>
-  );
-}
+export default function BottomTabNavigator({ navigation }) {
+	const context = useContext(Context)
 
-function getHeaderTitle(route) {
-  const routeName = route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
+	if (!context.loggedIn) {
+		navigation.pop()
+	}
 
-  switch (routeName) {
-    case 'Home':
-      return 'How to get started';
-    case 'Links':
-      return 'Links to learn more';
-  }
+	return (
+		<BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
+			<BottomTab.Screen
+				name='Links'
+				component={GalleryScreen}
+				options={{
+					title: () => {
+						return null
+					},
+					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name='md-home' />
+				}}
+			/>
+			<BottomTab.Screen
+				name='Home'
+				component={HomeScreen}
+				options={{
+					title: () => {
+						return null
+					},
+					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name='md-create' />
+				}}
+			/>
+
+			<BottomTab.Screen
+				name='Settings'
+				component={SettingsScreen}
+				options={{
+					title: () => {
+						return null
+					},
+					tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name='md-settings' />
+				}}
+			/>
+		</BottomTab.Navigator>
+	)
 }
