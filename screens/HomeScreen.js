@@ -1,24 +1,102 @@
-import * as WebBrowser from 'expo-web-browser'
-import React, { useContext } from 'react'
-import {
-  Image,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import React, { useContext, useRef } from 'react'
+import { Ionicons } from '@expo/vector-icons'
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native'
+
+import Swiper from 'react-native-swiper'
+import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas'
+
 import Context from '../context/GlobalContext'
 
 export default function HomeScreen() {
+  const sketchRef = useRef()
   const context = useContext(Context)
+
+  const undo = () => {
+    sketchRef.current.undo()
+  }
+
+  const clear = () => {
+    sketchRef.current.clear()
+  }
+
+  const save = () => {
+    sketchRef.current.save(
+      'png',
+      false,
+      'RNSketchCanvas',
+      String(Math.ceil(Math.random() * 100000000)),
+      false,
+      false,
+      false
+    )
+  }
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => context.getComputations()}>
-        <Text>Hello!</Text>
-      </TouchableOpacity>
+      <View style={[{ flex: 1 }, styles.innerContainer]}>
+        <View style={styles.topButtonsRow}>
+          <TouchableOpacity style={{ flex: 1 }} onPress={() => undo()}>
+            <Ionicons
+              style={{ flex: 1, textAlign: 'center' }}
+              name='md-arrow-back'
+              size={30}
+              color='black'
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{ flex: 1 }} onPress={() => clear()}>
+            <Ionicons
+              style={{ flex: 1, textAlign: 'center' }}
+              name='md-close'
+              size={30}
+              color='black'
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{ flex: 1 }} onPress={() => save()}>
+            <Ionicons
+              style={{ flex: 1, textAlign: 'center' }}
+              name='md-checkmark'
+              size={30}
+              color='black'
+            />
+          </TouchableOpacity>
+        </View>
+
+        <SketchCanvas
+          ref={sketchRef}
+          style={{ flex: 1 }}
+          strokeColor={'red'}
+          strokeWidth={7}
+          strokeColor='blue'
+          onSketchSaved={(success, path) => {
+            if (success) {
+              context.uploadPhoto(path)
+
+              Alert.alert(
+                'Drawing saved!',
+                'Image is being sent to the server',
+                [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+                { cancelable: true }
+              )
+            }
+          }}
+        ></SketchCanvas>
+
+        <View style={styles.bottomRow}>
+          <Swiper style={styles.wrapper}>
+            <View style={styles.slide1}>
+              <Text style={styles.text}>Hello Swiper</Text>
+            </View>
+            <View style={styles.slide2}>
+              <Text style={styles.text}>Beautiful</Text>
+            </View>
+            <View style={styles.slide3}>
+              <Text style={styles.text}>And simple</Text>
+            </View>
+          </Swiper>
+        </View>
+      </View>
     </View>
   )
 }
@@ -32,86 +110,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
+
+  innerContainer: {},
+
+  topButtonsRow: {
+    marginTop: 20,
+    height: 50,
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+
+  bottomRow: {
+    height: 200,
+    backgroundColor: 'blue',
   },
 })
