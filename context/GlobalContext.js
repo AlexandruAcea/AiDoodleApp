@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, Alert } from 'react-native'
 import axios from 'axios'
 
 const defaultState = {
@@ -71,7 +71,37 @@ class Provider extends Component {
   signup = (email, password) => {}
 
   uploadPhoto = (path) => {
-    console.log(path)
+    const url = `${this.state.link}/upload`
+
+    const photo = {
+      uri: 'file://' + path,
+      name: `Photo`,
+      type: `image/png`,
+    }
+
+    const formData = new FormData()
+
+    formData.append('photo', photo)
+    formData.append('style', 'Renoir')
+
+    axios({
+      method: 'post',
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        token: this.state.userToken,
+      },
+      data: formData,
+    })
+      .then((res) => {
+        Alert.alert(
+          'Drawing saved!',
+          'Image is being computed',
+          [{ text: 'OK' }],
+          { cancelable: true }
+        )
+      })
+      .catch((error) => console.log(error))
   }
 
   async setConnLinkToStorage(link) {

@@ -59,10 +59,10 @@ export default function GalleryScreen() {
         <TouchableOpacity
           key={key}
           style={styles.imageContainer}
-          //   onPress={() => CameraRoll.saveToCameraRoll('photo', imageUri)}
+          // onPress={() => CameraRoll.saveToCameraRoll('photo', imageUri)}
         >
           <Image
-            style={{ width: '100%', height: 300 }}
+            style={{ width: '100%', height: 420 }}
             source={{
               uri: imageUri,
             }}
@@ -74,6 +74,9 @@ export default function GalleryScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.gallery}>
+        <Text style={{ fontSize: 18, marginTop: 10 }}>Gallery</Text>
+      </View>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -93,5 +96,16 @@ const styles = StyleSheet.create({
 
   imageContainer: {
     flex: 1,
+    borderWidth: 2,
+    marginHorizontal: 8,
+    borderColor: 'black',
+    marginBottom: 20,
+  },
+
+  gallery: {
+    width: '100%',
+    height: 50,
+    alignItems: 'center',
+    backgroundColor: 'white',
   },
 })

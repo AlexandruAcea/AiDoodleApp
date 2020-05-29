@@ -42,7 +42,7 @@ export default function BottomTabNavigator({ navigation }) {
             return null
           },
           tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name='md-home' />
+            <TabBarIcon focused={focused} name='md-images' />
           ),
         }}
       />
